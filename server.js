@@ -36,7 +36,9 @@ app.use("/payment", razorpayrouter);
 app.use("/admin", adminrouter);
 app.use("/api", orderrouter);
 
-
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
 app.listen(process.env.PORT || 8080, () => {
   console.log("server running")
 })

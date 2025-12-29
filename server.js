@@ -1,0 +1,42 @@
+require('dotenv').config()
+const express = require("express")
+const cors = require("cors")
+const database = require("./database/db.js")
+
+const userrouter = require("./router/user-router.js")
+const adminrouter = require("./router/admin-router");
+const productrouter = require("./router/product-router.js")
+const orderrouter = require("./router/order-router.js")
+const cartrouter = require("./router/cart-router.js")
+const cookieParser = require("cookie-parser")
+const razorpayrouter = require("./router/razorpay-router.js");
+
+
+const app = express()
+database()
+
+/* 🔑 CORS — REQUIRED */
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true
+  })
+)
+
+/* 🔑 MIDDLEWARE ORDER MATTERS */
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+
+/* ROUTES */
+app.use("/api", userrouter)
+app.use("/product", productrouter)
+app.use("/usercart", cartrouter)
+app.use("/payment", razorpayrouter);
+app.use("/admin", adminrouter);
+app.use("/api", orderrouter);
+
+
+app.listen(process.env.PORT || 8080, () => {
+  console.log("server running")
+})

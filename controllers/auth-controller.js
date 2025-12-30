@@ -85,11 +85,12 @@ const signup_controller=async (req,res)=>{
 
     // ✅ SINGLE RESPONSE ONLY
     res.cookie("token", token, {
-  httpOnly: true,
-  sameSite: "none", // 🔴 REQUIRED for cross-domain
-  secure: true,     // 🔴 REQUIRED on HTTPS
-  maxAge: 10 * 24 * 60 * 60 * 1000 // 10 days
-});
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/"
+    });
+
 
     return res.json({
       status: "success",

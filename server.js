@@ -16,12 +16,12 @@ const app = express()
 database()
 
 /* 🔑 CORS — REQUIRED */
-app.use(
-  cors({
-    origin: "https://krizoo.vercel.app",
-    credentials: true
-  })
-)
+app.use(cors({
+  origin: "https://krizoo.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"]
+}));
 
 /* 🔑 MIDDLEWARE ORDER MATTERS */
 app.use(cookieParser())

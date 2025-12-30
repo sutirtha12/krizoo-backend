@@ -3,8 +3,9 @@ const jwt = require("jsonwebtoken");
 
 const authmiddleware = (req, res, next) => {
   try {
-    // ✅ COOKIE ONLY (production)
-    const token = req.cookies?.token;
+    // ✅ READ TOKEN FROM HEADER (WORKS ON MOBILE + SAFARI)
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({
@@ -13,11 +14,8 @@ const authmiddleware = (req, res, next) => {
       });
     }
 
-    // ✅ VERIFY WITH ENV SECRET
-    const decoded = jwt.verify(
-      token,
-      "sutirtha"
-    );
+    // ✅ VERIFY USING ENV SECRET
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // ✅ Attach user info
     req.userinfo = decoded;

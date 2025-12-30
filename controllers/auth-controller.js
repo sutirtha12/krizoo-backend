@@ -97,7 +97,8 @@ const signup_controller=async (req,res)=>{
 
     return res.json({
       status: "success",
-      data: checkusername
+      data: checkusername,
+      token
     });
 
   } catch (error) {

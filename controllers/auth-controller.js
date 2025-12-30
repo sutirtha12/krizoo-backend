@@ -82,7 +82,7 @@ const signup_controller=async (req,res)=>{
         userid: checkusername._id,
         username: checkusername.username
       },
-      process.env.JWT_SECRET,
+      "sutirtha",
       { expiresIn: "10d" }
     );
 

@@ -16,8 +16,11 @@ const app = express()
 database()
 
 /* 🔑 CORS — REQUIRED */
+app.set("trust proxy", 1);
+
+
 app.use(cors({
-  origin: "https://krizoo.vercel.app",
+  origin: "krizoo-frontend.vercel.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"]

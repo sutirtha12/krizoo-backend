@@ -24,8 +24,9 @@ router.get("/me", authmiddleware, async (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "lax",
-    secure: false // true only in production (HTTPS)
+    sameSite: "none",
+    secure: true,
+    path:"/" // true only in production (HTTPS)
   });
 
   res.json({

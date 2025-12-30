@@ -15,7 +15,7 @@ const authmiddleware = (req, res, next) => {
     }
 
     // ✅ VERIFY USING ENV SECRET
-    const decoded = jwt.verify(token, "sutirtha");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // ✅ Attach user info
     req.userinfo = decoded;

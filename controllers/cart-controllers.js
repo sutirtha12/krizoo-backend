@@ -7,6 +7,12 @@ const newcart = async (req, res) => {
     const { productId, size } = req.body;
 
     const user = await User.findById(req.userinfo.userid);
+    if (!user) {
+  return res.status(401).json({
+    status: "failed",
+    message: "Unauthorized"
+  });
+}
 
     const existingItem = user.cart.find(
       item =>
@@ -45,7 +51,12 @@ const fetchcart = async (req, res) => {
     const user = await User.findById(req.userinfo.userid).populate("cart.productId");
 console.log(user);
 
-
+if (!user) {
+  return res.status(401).json({
+    status: "failed",
+    message: "Unauthorized"
+  });
+}
     res.json({
       status: "success",
       data:{
@@ -106,6 +117,12 @@ const deletecart = async (req, res) => {
     const { itemId } = req.params;
 
     const user = await User.findById(req.userinfo.userid);
+    if (!user) {
+  return res.status(401).json({
+    status: "failed",
+    message: "Unauthorized"
+  });
+}
 
     user.cart = user.cart.filter(
   item =>

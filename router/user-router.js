@@ -21,7 +21,7 @@ router.get("/me", authmiddleware, async (req, res) => {
 
     res.json({
       status: "success",
-      user: userData
+      data: userData
     });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch user" });

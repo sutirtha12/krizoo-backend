@@ -19,9 +19,12 @@ database()
 
 app.use(cors({
   origin: "https://krizoo-frontend.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+app.options("*",cors())
 
 /* 🔑 MIDDLEWARE ORDER MATTERS */
 app.use(express.json())

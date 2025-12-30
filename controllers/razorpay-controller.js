@@ -24,9 +24,14 @@ const createOrder = async (req, res) => {
     });
 
     res.json({
-      status: "success",
-      data: order
-    });
+  status: "success",
+  data: {
+    orderId: order.id,
+    amount: order.amount,
+    currency: order.currency,
+    key: process.env.RAZORPAY_KEY_ID
+  }
+});
   } catch (err) {
     console.error("RAZORPAY CREATE ERROR:", err);
     res.status(500).json({

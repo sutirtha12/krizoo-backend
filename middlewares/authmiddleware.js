@@ -3,23 +3,31 @@ const jwt = require("jsonwebtoken");
 
 const authmiddleware = (req, res, next) => {
   try {
-    const token =
-      req.cookies.token ||
-      (req.headers.authorization &&
-        req.headers.authorization.split(" ")[1]);
+    // ✅ COOKIE ONLY (production)
+    const token = req.cookies?.token;
 
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({
+        status: "failed",
+        message: "Unauthorized – token missing"
+      });
     }
 
-    const decodedtoken = jwt.verify(token, "sutirtha");
+    // ✅ VERIFY WITH ENV SECRET
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
 
-    // 🔑 THIS IS WHAT YOU USE EVERYWHERE
-    req.userinfo = decodedtoken;
+    // ✅ Attach user info
+    req.userinfo = decoded;
 
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({
+      status: "failed",
+      message: "Invalid or expired token"
+    });
   }
 };
 

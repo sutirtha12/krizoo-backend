@@ -79,16 +79,17 @@ const signup_controller=async (req,res)=>{
         userid: checkusername._id,
         username: checkusername.username
       },
-      "sutirtha",
+      process.env.JWT_SECRET,
       { expiresIn: "10d" }
     );
 
     // ✅ SINGLE RESPONSE ONLY
     res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax", // IMPORTANT
-      secure: false    // true only in production
-    });
+  httpOnly: true,
+  sameSite: "none", // 🔴 REQUIRED for cross-domain
+  secure: true,     // 🔴 REQUIRED on HTTPS
+  maxAge: 10 * 24 * 60 * 60 * 1000 // 10 days
+});
 
     return res.json({
       status: "success",

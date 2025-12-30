@@ -10,28 +10,31 @@ router.post('/login',login_controller)
 
 
 router.get("/me", authmiddleware, async (req, res) => {
-  const check = await user.findById(req.userinfo.userid).select("-password");
+  try {
+    const userData = await user
+      .findById(req.userinfo.userid)
+      .select("-password");
 
-  res.json({
-    status: "success",
-    data:check
-  });
+    if (!userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      status: "success",
+      user: userData
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch user" });
+  }
 });
 
 
 
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-    path:"/" // true only in production (HTTPS)
-  });
-
   res.json({
     status: "success",
-    message: "Logged out successfully"
+    message: "Logged out"
   });
 });
 

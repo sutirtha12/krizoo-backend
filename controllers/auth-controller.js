@@ -53,6 +53,9 @@ const signup_controller=async (req,res)=>{
 
    const login_controller = async (req, res) => {
   try {
+    console.log("LOGIN BODY:", req.body)
+
+
     const { username, password } = req.body;
 
     const checkusername = await model.findOne({ username });
@@ -94,8 +97,7 @@ const signup_controller=async (req,res)=>{
 
     return res.json({
       status: "success",
-      data: checkusername,
-      token
+      data: checkusername
     });
 
   } catch (error) {

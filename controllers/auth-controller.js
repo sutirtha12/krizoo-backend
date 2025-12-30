@@ -36,10 +36,19 @@ const signup_controller=async (req,res)=>{
             address
 
         })
+        const token = jwt.sign(
+      {
+        userid: checkusername._id,
+        username: checkusername.username
+      },
+      "sutirtha",
+      { expiresIn: "10d" }
+    );
         if(result){
             res.json({
                 status:"sucess",
-                data:result
+                data:result,
+                token
             })
         }
     } catch (error) {

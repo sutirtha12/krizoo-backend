@@ -18,7 +18,7 @@ database()
 /* 🔑 CORS — REQUIRED */
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://krizoo.vercel.app",
     credentials: true
   })
 )

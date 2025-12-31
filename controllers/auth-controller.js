@@ -1,8 +1,8 @@
-const model = require("../models/user_schema.js")
-const jwt = require('jsonwebtoken')
-const hashing = require('bcrypt')
+const model = require("../models/user_schema");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-
+/* ================= SIGNUP ================= */
 const signup_controller = async (req, res) => {
   try {
     const {
@@ -15,16 +15,22 @@ const signup_controller = async (req, res) => {
       role,
       password,
       address
-    } = req.body
-    const checkdetail = await model.findOne({ $or: [{ username }, { email }] })
-    if (checkdetail) {
-      return res.json({
+    } = req.body;
+
+    const existing = await model.findOne({
+      $or: [{ username }, { email }]
+    });
+
+    if (existing) {
+      return res.status(409).json({
         status: "failed",
-        message: "existing username /email id found"
-      })
+        message: "Username or email already exists"
+      });
     }
-    const hashpassword = await hashing.hash(password, 12)
-    const result = await model.create({
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = await model.create({
       username,
       firstname,
       lastname,
@@ -32,89 +38,85 @@ const signup_controller = async (req, res) => {
       phonenumber,
       email,
       role,
-      password: hashpassword,
+      password: hashedPassword,
       address
+    });
 
-    })
-    const token = jwt.sign(
-      {
-        userid: result._id,
-        username: result.username
-      },
-      "sutirtha",
-      { expiresIn: "10d" }
-    );
-    if (result) {
-      res.json({
-        status: "sucess",
-        data: result,
-        token
-      })
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET not set");
     }
-  } catch (error) {
-    res.json({
-      status: "failed",
-      message: "signup couldnt perfomed try again incorrect details/passowords"
-    }).status(404)
-  }
-}
-
-
-const login_controller = async (req, res) => {
-  try {
-    console.log("LOGIN BODY:", req.body)
-
-console.log(process.env.JWT_SECRET);
-
-    const { username, password } = req.body;
-
-    const checkusername = await model.findOne({ username });
-    if (!checkusername) {
-      return res.json({
-        status: "failed",
-        message: "incorrect username"
-      });
-    }
-
-    const checkpassword = await hashing.compare(
-      password,
-      checkusername.password
-    );
-    if (!checkpassword) {
-      return res.json({
-        status: "failed",
-        message: "incorrect password"
-      });
-    }
-
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET not set");
-}
-
 
     const token = jwt.sign(
-      {
-        userid: checkusername._id,
-        username: checkusername.username
-      },
-      "sutirtha",
+      { userid: user._id, username: user.username },
+      process.env.JWT_SECRET,
       { expiresIn: "10d" }
     );
 
-
-    return res.json({
+    return res.status(201).json({
       status: "success",
-      data: checkusername,
+      data: {
+        _id: user._id,
+        username: user.username,
+        role: user.role
+      },
       token
     });
 
-  } catch (error) {
+  } catch (err) {
     return res.status(500).json({
       status: "failed",
-      message: "login failed"
+      message: "Signup failed"
     });
   }
 };
 
+/* ================= LOGIN ================= */
+const login_controller = async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-module.exports = { signup_controller, login_controller }
+    const user = await model.findOne({ username });
+    if (!user) {
+      return res.status(401).json({
+        status: "failed",
+        message: "Incorrect username or password"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        status: "failed",
+        message: "Incorrect username or password"
+      });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET not set");
+    }
+
+    const token = jwt.sign(
+      { userid: user._id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "10d" }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        _id: user._id,
+        username: user.username,
+        role: user.role
+      },
+      token
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      status: "failed",
+      message: "Login failed"
+    });
+  }
+};
+
+module.exports = { signup_controller, login_controller };

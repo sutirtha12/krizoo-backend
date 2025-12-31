@@ -64,6 +64,7 @@ const login_controller = async (req, res) => {
   try {
     console.log("LOGIN BODY:", req.body)
 
+console.log(process.env.JWT_SECRET);
 
     const { username, password } = req.body;
 
@@ -86,12 +87,17 @@ const login_controller = async (req, res) => {
       });
     }
 
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET not set");
+}
+
+
     const token = jwt.sign(
       {
         userid: checkusername._id,
         username: checkusername.username
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET ,
       { expiresIn: "10d" }
     );
 

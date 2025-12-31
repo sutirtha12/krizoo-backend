@@ -41,7 +41,7 @@ const signup_controller = async (req, res) => {
         userid: result._id,
         username: result.username
       },
-      process.env.JWT_SECRET,
+      "sutirtha",
       { expiresIn: "10d" }
     );
     if (result) {
@@ -97,7 +97,7 @@ if (!process.env.JWT_SECRET) {
         userid: checkusername._id,
         username: checkusername.username
       },
-      process.env.JWT_SECRET ,
+      "sutirtha",
       { expiresIn: "10d" }
     );
 
